@@ -256,6 +256,9 @@ Before we do that, let's do some quick diagnostics on the dataset to make sure w
 ```{r}
 #| label: fig-distribution-period-party
 #| fig-cap: Distribution of address count and party representation by period.
+#| fig-subcap:
+#|  - Distribution of addresses by period
+#|  - Distribution of party representation by period
 #| layout-ncol: 2
 
 # Distribution of addresses by period
