@@ -1,0 +1,8 @@
+variable,name,variable_type,description
+president,"President",character,"The president's last name"
+first_name,"First Name",character,"The president's first name"
+party,Party,character,"The president's party affiliation"
+date,"Date",date,"The date the address was given"
+address_type,"Address type",character,"The type of address (SOTU, other)"
+delivery,"Delivery modality",character,"The modality of the address (spoken, written)"
+text,"Text",character,"The text of the address (audience reactions removed)"

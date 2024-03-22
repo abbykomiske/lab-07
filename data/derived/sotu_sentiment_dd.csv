@@ -1,0 +1,9 @@
+variable,name,variable_type,description
+address_id,"Address ID",numeric,"Unique identifier for each address"
+address_year,"Address Year",numeric,"Year of the address"
+president,"President",character,"Name of the President"
+party,"Party",character,"Political party of the President"
+period,"Period",character,"Period of the address ('pre' or 'post' 9/11)"
+token,"Token",character,"Individual word tokens"
+token_id,"Token ID",numeric,"Unique identifier for each token within an address"
+sentiment,"Sentiment score",character,"Sentiment score of the token ('positive' or 'negative')"
