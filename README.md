@@ -1,5 +1,17 @@
 # Lab 07: Dataset alchemy
 
+<!--
+
+- [ ] Add key for Lab 07
+- Use the SOTU dataset
+
+- [ ] Update install for `quanteda.corpora` package
+  - pak::pak("quanteda/quanteda.corpora")
+  - remotes("quanteda/quanteda.corpora")
+
+-->
+
+
 ## Preparation
 
 - Read/ annotate: [Recipe \#7](https://qtalr.github.io/qtalrkit/articles/recipe-7.html). You can refer back to this document to help you at any point during this lab activity.
