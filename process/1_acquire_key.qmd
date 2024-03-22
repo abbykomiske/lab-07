@@ -1,0 +1,208 @@
+---
+title: "Acquire data"
+---
+
+## Overview
+
+The goal of this script is to acquire the State of the Union addresses from the American Presidency Project. The data will be acquired from the `quanteda.corpora` package. This package contains a number of corpora that can be used for text analysis.
+
+## Description
+
+The State of the Union addresses are a collection of speeches given by the President of the United States to a joint session of Congress. The speeches are typically given annually, and they are used to report on the condition of the nation and to outline the President's legislative agenda. The State of the Union addresses are a valuable resource for text analysis because they provide a record of the President's priorities and policy proposals.
+
+In the `quanteda.corpora` package, the State of the Union addresses are available as a corpus called `quanteda.corpora::data_corpus_sotu`. According to the package documentation, this corpus contains the State of the Union addresses from 1790 to present. The addresses have been modified such that the audience reactions are removed.
+
+## Acquire data
+
+First, I will load the necessary packages for this script. These include basic data manipulation packages, file structure packages, data documentation packages, and the `quanteda. corpora` package, of course.
+
+```{r}
+#| label: load-packages
+#| message: false
+
+library(dplyr)            # data manipulation
+library(tidytext)         # data manipulation (tidy `corpus` objects)
+library(fs)               # file structure
+library(qtalrkit)         # data documentation
+library(quanteda.corpora) # quanteda corpora
+library(readr)            # read/write csv
+library(knitr)            # table formatting
+```
+
+Let's now load the State of the Union addresses from the `quanteda.corpora` package. We will use the `quanteda.corpora::data_corpus_sotu` call to access the data and assign it to a new object called `sotu`.
+
+```{r}
+#| label: load-data
+
+# Load the State of the Union addresses
+sotu <- quanteda.corpora::data_corpus_sotu
+```
+
+Now, let's inspect the `sotu` object to see what it structure is like.
+
+```{r}
+#| label: inspect-data
+
+# Inspect the sotu object
+class(sotu)
+```
+
+The `sotu` object is a `corpus` object. This is a special type of object that is used by the `quanteda` package. It is designed to store a collection of texts and associated metadata. We will want to work with a tidy dataset, so we can use the `tidytext::tidy()` function to convert the `corpus` object to a tidy dataset.
+
+```{r}
+#| label: tidy-data
+
+# Convert the corpus to a tidy dataset
+sotu_tbl <- tidy(sotu)
+
+# Preview
+glimpse(sotu_tbl)
+```
+
+After converting the `corpus` object to a tidy dataset, we can see that the `sotu_tbl` object contains a number of columns:
+
+- `text`: the text of the State of the Union address
+- `FirstName`: the first name of the President
+- `President`: the last name of the President
+- `Date`: the date of the address (in the format "YYYY-MM-DD")
+- `delivery`: the delivery method of the address
+- `type`: the type of address (e.g., "State of the Union")
+- `party`: the political party of the President
+
+There are a total of `r nrow(sotu_tbl)` rows in the dataset corresponding to the number of State of the Union addresses in the corpus.
+
+To get to know the data a little better, let's do some diagnostics on each of the variables that may need a bit more clarification.
+
+Let's start with the `delivery` variable. From the glimpse, we can see the "spoken" value. What other values are there?
+
+```{r}
+#| label: delivery-diagnostics
+
+# Diagnostics on the `delivery` variable
+sotu_tbl |>
+  count(delivery, sort = TRUE)
+```
+
+OK. We have "spoken" and "written". We will need to include this in our data dictionary.
+
+Next, let's look at the `type` variable. What does type refer to?
+
+```{r}
+#| label: type-diagnostics
+
+# Diagnostics on the `type` variable
+sotu_tbl |>
+  count(type, sort = TRUE)
+```
+
+The majority of the `type` values are "SOTU" --but there are a few "other" types. Let's filter the data to see what these "other" types are.
+
+```{r}
+#| label: other-type-diagnostics
+
+# Diagnostics on the `type` variable
+sotu_tbl |>
+  filter(type == "other")
+```
+
+It's still not clear what the "other" value refers to. In the R documentation for the dataset, we are referred to the American Presidency Project for more information. After consulting [Introductory essay](https://www.presidency.ucsb.edu/documents/presidential-documents-archive-guidebook/annual-messages-congress-the-state-the-union) on the APP website, we can see that the "other" type refers to various types of presidential messages to Congress, not formally called "State of the Union" addresses. We will need to include this in our data dictionary.
+
+Finally, let's look at the `party` variable. What are the unique values for the `party` variable?
+
+```{r}
+#| label: party-diagnostics
+
+# Diagnostics on the `party` variable
+sotu_tbl |>
+  count(party, sort = TRUE)
+```
+
+We can see that there are six unique values for the `party` variable. We will need to include this in our data dictionary.
+
+For fun, let's visualize the time spans for the various political parties. We will use the `date` variable to create a time series plot State of the Union addresses given by each party. I will add the `delivery` to get a sense of the distribution of the delivery methods.
+
+```{r}
+#| label: fig-party-time-series
+#| fig-cap: Time series plot of the number of State of the Union addresses given by each political party.
+#| fig-width: 6
+#| fig-asp: 0.5
+
+# Load packages
+library(ggplot2)
+
+# Create a time series plot of the political parties in a Gant chart
+sotu_tbl |>
+  mutate(Date = as.Date(Date)) |>
+  count(party, Date, delivery) |>
+  ggplot(aes(Date, party, color = delivery)) +
+  geom_tile(linewidth = 0.5) +
+  # add more detail to the time series plot
+  scale_x_date(date_breaks = "10 years", date_labels = "%Y") +
+  labs(title = "State of the Union addresses by political party",
+       x = "Year",
+       y = "Political party",
+       color = "Delivery") +
+  theme_minimal() +
+  # modify the x-axis labels to angle them
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+From @fig-party-time-series, we can see that the Democratic and Republican parties have been the two parties since the later part of the 19th century. Furthermore, we can see that the "spoken" delivery method has been the most common method for delivering the State of the Union addresses since the 1930s.
+
+Now, the `sotu_tbl` data frame reflects the State of the Union addresses from the `quanteda.corpora` package. The data is in a tidy format, but we could make some minimal adjustments to make the data a bit more user-friendly. (1) let's make the variable names more consistent and transparent, (2) let's reorder the variables from meta-data to text data, and (3) let's order the `president` variable by the `date` variable.
+
+```{r}
+#| label: adjust-variables
+
+# Adjust variable names
+sotu_tbl <-
+  sotu_tbl |>
+  rename(
+    president = President,
+    first_name = FirstName,
+    date = Date,
+    address_type = type
+  ) |>
+  select(president, first_name, party, date, address_type, delivery, text) |>
+  arrange(date, president)
+```
+
+## Write dataset
+
+Since we acquired a dataset in tidy format, we will write this to disk in the `data/derived/` folder. We will also create a data dictionary for the dataset and make reference to the American Presidency Project for the data origin.
+
+First, let's write the `sotu_tbl` dataset to disk.
+
+```{r}
+#| label: write-dataset
+#| message: false
+
+# Write the dataset to disk
+write_csv(sotu_tbl, "../data/derived/sotu_curated.csv")
+```
+
+Next, let's create the scaffolding for a data dictionary file for the dataset.
+
+```{r}
+#| label: create-data-dictionary
+
+# Create a data dictionary
+# Use the `qtalrkit::create_data_dictionary()` function to create a data dictionary
+
+create_data_dictionary(
+  data = sotu_tbl,
+  file_path = "../data/derived/sotu_curated_dd.csv",
+)
+```
+
+Now, I've added the data dictionary content to the scaffolded file by opening the file in a text editor and adding content. The `sotu_curated_dd.csv` file is now complete and seen in @tbl-sotu-curated-dd.
+
+```{r}
+#| label: tbl-sotu-curated-dd
+#| tbl-cap: Data dictionary for the State of the Union addresses dataset.
+#| message: false
+
+# Load the data dictionary
+read_csv("../data/derived/sotu_curated_dd.csv") |>
+  kable()
+```
