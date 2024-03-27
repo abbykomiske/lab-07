@@ -1,17 +1,5 @@
 # Lab 07: Dataset alchemy
 
-<!--
-
-- [ ] Add key for Lab 07
-- Use the SOTU dataset
-
-- [ ] Update install for `quanteda.corpora` package
-  - pak::pak("quanteda/quanteda.corpora")
-  - remotes("quanteda/quanteda.corpora")
-
--->
-
-
 ## Preparation
 
 - Read/ annotate: [Recipe \#7](https://qtalr.github.io/qtalrkit/articles/recipe-7.html). You can refer back to this document to help you at any point during this lab activity.
@@ -97,7 +85,10 @@ Some questions to consider:
 The State of the Union Addresses (SOTU) dataset is a curated dataset of the State of the Union Addresses from 1790 to 2019. The dataset is available in the `quanteda.corpora` package. Install the package before continuing.
 
 ```r
-install.packages("quanteda.corpora")
+if (!requireNamespace("pak", quietly = TRUE)) {
+  install.packages("pak")
+}
+pak::pak("quanteda/quanteda.corpora")
 ```
 
 With the `quanteda.corpora` package installed, you can load the dataset into your R session with the following code:
