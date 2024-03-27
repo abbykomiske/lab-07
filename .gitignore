@@ -11,3 +11,4 @@ _site/
 
 data/derived/sotu_curated.csv
 data/derived/sotu_sentiment.csv
+process/*_files
