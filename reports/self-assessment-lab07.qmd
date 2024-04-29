@@ -1,0 +1,9 @@
+--- 
+title: Self-assessment for lab 7 
+author: Abby Komiske
+doc: pdf
+---
+
+## Assessment 
+
+In preparation for lab 7, we went over data preparation with normalization and tokenization, as well as the enrichment process with re-coding, generation, and integration. This part of the process comes after framing and preparing but before analyzing. For the ‘transform’ lab, we used the State of the Union Addresses to transform the dataset, which included making it reproducible, documenting the code, and describing the resulting data and data dictionary. I mainly watched this lab instead of typing the code along with the instructor because I was a little overwhelmed with the readings. I found the enrichment process from the textbook to be confusing, but the lab with the slideshow coding helped me understand its bigger picture a lot more. Additionally, I only consulted the professor for this lab. 
